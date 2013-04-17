@@ -8,11 +8,16 @@
 #define BUFFER_SIZE 44
 
 #define MY_UUID { 0x49, 0x6E, 0x04, 0xAD, 0x14, 0x2A, 0x48, 0xAB, 0xB1, 0x65, 0x7F, 0xF4, 0xA9, 0x98, 0x72, 0xD2 }
-PBL_APP_INFO(MY_UUID,
-             "TextWatch++", "Seth Voltz",
-             1, 0,
-             RESOURCE_ID_IMAGE_MENU_ICON,
-             APP_INFO_WATCH_FACE
+PBL_APP_INFO(
+	MY_UUID,
+	"TextWatch++", "Seth Voltz",
+	1, 0,
+	RESOURCE_ID_IMAGE_MENU_ICON,
+	#if DEBUG
+	APP_INFO_STANDARD_APP
+	#else
+	APP_INFO_WATCH_FACE
+	#endif
 );
 
 Window window;
