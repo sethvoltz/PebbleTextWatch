@@ -1,0 +1,4 @@
+.waf-*
+build/
+.lock*
+pebble_app.ldincludelibmakefiletoolswscript
