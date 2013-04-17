@@ -5,7 +5,7 @@
 #include "num2words-en.h"
 
 #define DEBUG 0
-// #define BUFFER_SIZE 44
+#define BUFFER_SIZE 44
 
 #define MY_UUID { 0x49, 0x6E, 0x04, 0xAD, 0x14, 0x2A, 0x48, 0xAB, 0xB1, 0x65, 0x7F, 0xF4, 0xA9, 0x98, 0x72, 0xD2 }
 PBL_APP_INFO(MY_UUID,
@@ -39,8 +39,7 @@ static char line4Str[2][BUFFER_SIZE];
 static bool textInitialized = false;
 
 // Animation handler
-void animationStoppedHandler(struct Animation *animation, bool finished, void *context)
-{
+void animationStoppedHandler(struct Animation *animation, bool finished, void *context) {
 	TextLayer *current = (TextLayer *)context;
 	GRect rect = layer_get_frame(&current->layer);
 	rect.origin.x = 144;
@@ -48,8 +47,7 @@ void animationStoppedHandler(struct Animation *animation, bool finished, void *c
 }
 
 // Animate line
-void makeAnimationsForLayers(Line *line, TextLayer *current, TextLayer *next)
-{
+void makeAnimationsForLayers(Line *line, TextLayer *current, TextLayer *next) {
 	GRect rect = layer_get_frame(&next->layer);
 	rect.origin.x -= 144;
 
@@ -73,8 +71,7 @@ void makeAnimationsForLayers(Line *line, TextLayer *current, TextLayer *next)
 }
 
 // Update line
-void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value)
-{
+void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value) {
 	TextLayer *next, *current;
 
 	GRect rect = layer_get_frame(&line->currentLayer.layer);
@@ -96,8 +93,7 @@ void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value)
 }
 
 // Check to see if the current line needs to be updated
-bool needToUpdateLine(Line *line, char lineStr[2][BUFFER_SIZE], char *nextValue)
-{
+bool needToUpdateLine(Line *line, char lineStr[2][BUFFER_SIZE], char *nextValue) {
 	char *currentStr;
 	GRect rect = layer_get_frame(&line->currentLayer.layer);
 	currentStr = (rect.origin.x == 0) ? lineStr[0] : lineStr[1];
@@ -110,19 +106,17 @@ bool needToUpdateLine(Line *line, char lineStr[2][BUFFER_SIZE], char *nextValue)
 }
 
 // Update screen based on new time
-void display_time(PblTm *t)
-{
+void display_time(PblTm *t) {
 	// The current time text will be stored in the following 4 strings
 	char textLine1[BUFFER_SIZE];
 	char textLine2[BUFFER_SIZE];
 	char textLine3[BUFFER_SIZE];
 	char textLine4[BUFFER_SIZE];
 
-	// time_to_3words(t->tm_hour, t->tm_min, textLine1, textLine2, textLine3, BUFFER_SIZE);
-	fuzzy_hours_to_words(t, textLine1); // TODO: Pass BUFFER_SIZE and remove from num2words-en.h
-	fuzzy_minutes_to_words(t, textLine2);
-	fuzzy_sminutes_to_words(t, textLine3);
-	fuzzy_dates_to_words(t, textLine4);
+	fuzzy_hours_to_words(t,    textLine1, BUFFER_SIZE);
+	fuzzy_minutes_to_words(t,  textLine2, BUFFER_SIZE);
+	fuzzy_sminutes_to_words(t, textLine3, BUFFER_SIZE);
+	fuzzy_dates_to_words(t,    textLine4, BUFFER_SIZE);
 
 	if (needToUpdateLine(&line1, line1Str, textLine1)) {
 		updateLineTo(&line1, line1Str, textLine1);
@@ -139,13 +133,11 @@ void display_time(PblTm *t)
 }
 
 // Update screen without animation first time we start the watchface
-void display_initial_time(PblTm *t)
-{
-	// time_to_3words(t->tm_hour, t->tm_min, line1Str[0], line2Str[0], line3Str[0], BUFFER_SIZE);
-	fuzzy_hours_to_words(t, line1Str[0]); // TODO: Pass BUFFER_SIZE and remove from num2words-en.h
-	fuzzy_minutes_to_words(t, line2Str[0]);
-	fuzzy_sminutes_to_words(t, line3Str[0]);
-	fuzzy_dates_to_words(t, line4Str[0]);
+void display_initial_time(PblTm *t) {
+	fuzzy_hours_to_words(t,    line1Str[0], BUFFER_SIZE);
+	fuzzy_minutes_to_words(t,  line2Str[0], BUFFER_SIZE);
+	fuzzy_sminutes_to_words(t, line3Str[0], BUFFER_SIZE);
+	fuzzy_dates_to_words(t,    line4Str[0], BUFFER_SIZE);
 
 	text_layer_set_text(&line1.currentLayer, line1Str[0]);
 	text_layer_set_text(&line2.currentLayer, line2Str[0]);
@@ -153,10 +145,8 @@ void display_initial_time(PblTm *t)
 	text_layer_set_text(&line4.currentLayer, line4Str[0]);
 }
 
-
 // Configure the first line of text
-void configureBoldLayer(TextLayer *textlayer)
-{
+void configureBoldLayer(TextLayer *textlayer) {
 	text_layer_set_font(textlayer, fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
 	text_layer_set_text_color(textlayer, GColorWhite);
 	text_layer_set_background_color(textlayer, GColorClear);
@@ -164,8 +154,7 @@ void configureBoldLayer(TextLayer *textlayer)
 }
 
 // Configure for the 2nd and 3rd lines
-void configureLightLayer(TextLayer *textlayer)
-{
+void configureLightLayer(TextLayer *textlayer) {
 	text_layer_set_font(textlayer, fonts_get_system_font(FONT_KEY_GOTHAM_42_LIGHT));
 	text_layer_set_text_color(textlayer, GColorWhite);
 	text_layer_set_background_color(textlayer, GColorClear);
@@ -173,14 +162,12 @@ void configureLightLayer(TextLayer *textlayer)
 }
 
 // Configure for the 4th line
-void configureDateLayer(TextLayer *textlayer)
-{
+void configureDateLayer(TextLayer *textlayer) {
 	text_layer_set_font(textlayer, fonts_get_system_font(FONT_KEY_GOTHIC_28));
 	text_layer_set_text_color(textlayer, GColorWhite);
 	text_layer_set_background_color(textlayer, GColorClear);
 	text_layer_set_text_alignment(textlayer, GTextAlignmentLeft);
 }
-
 
 /**
  * Debug methods. For quickly debugging enable debug macro on top to transform the watchface into
@@ -217,19 +204,19 @@ void down_single_click_handler(ClickRecognizerRef recognizer, Window *window) {
 }
 
 void click_config_provider(ClickConfig **config, Window *window) {
-  (void)window;
+	(void)window;
 
-  config[BUTTON_ID_UP]->click.handler = (ClickHandler) up_single_click_handler;
-  config[BUTTON_ID_UP]->click.repeat_interval_ms = 100;
+	config[BUTTON_ID_UP]->click.handler = (ClickHandler) up_single_click_handler;
+	config[BUTTON_ID_UP]->click.repeat_interval_ms = 100;
 
-  config[BUTTON_ID_DOWN]->click.handler = (ClickHandler) down_single_click_handler;
-  config[BUTTON_ID_DOWN]->click.repeat_interval_ms = 100;
+	config[BUTTON_ID_DOWN]->click.handler = (ClickHandler) down_single_click_handler;
+	config[BUTTON_ID_DOWN]->click.repeat_interval_ms = 100;
 }
 
 #endif
 
 void handle_init(AppContextRef ctx) {
-  	(void)ctx;
+	(void)ctx;
 
 	window_init(&window, "TextWatch");
 	window_stack_push(&window, true);
@@ -267,7 +254,7 @@ void handle_init(AppContextRef ctx) {
 	display_initial_time(&t);
 
 	// Load layers
-  	layer_add_child(&window.layer, &line1.currentLayer.layer);
+	layer_add_child(&window.layer, &line1.currentLayer.layer);
 	layer_add_child(&window.layer, &line1.nextLayer.layer);
 	layer_add_child(&window.layer, &line2.currentLayer.layer);
 	layer_add_child(&window.layer, &line2.nextLayer.layer);
@@ -276,26 +263,25 @@ void handle_init(AppContextRef ctx) {
 	layer_add_child(&window.layer, &line4.currentLayer.layer);
 	layer_add_child(&window.layer, &line4.nextLayer.layer);
 
-#if DEBUG
+	#if DEBUG
 	// Button functionality
 	window_set_click_config_provider(&window, (ClickConfigProvider) click_config_provider);
-#endif
+	#endif
 }
 
 // Time handler called every minute by the system
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
-  (void)ctx;
-
-  display_time(t->tick_time);
+	(void)ctx;
+	display_time(t->tick_time);
 }
 
 void pbl_main(void *params) {
-  PebbleAppHandlers handlers = {
-    .init_handler = &handle_init,
-	.tick_info = {
-		      .tick_handler = &handle_minute_tick,
-		      .tick_units = MINUTE_UNIT
-		    }
-  };
-  app_event_loop(params, &handlers);
+	PebbleAppHandlers handlers = {
+		.init_handler = &handle_init,
+		.tick_info = {
+			.tick_handler = &handle_minute_tick,
+			.tick_units = MINUTE_UNIT
+		}
+	};
+	app_event_loop(params, &handlers);
 }
